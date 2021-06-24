@@ -10,6 +10,7 @@ namespace DogGo.Models
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public int Duration { get; set; }
+        public string DogName { get; set; }
         public int WalkerId { get; set; }   
         public int DogId { get; set; }  
         public Owner Client { get; set; }

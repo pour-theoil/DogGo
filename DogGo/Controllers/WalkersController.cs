@@ -132,6 +132,7 @@ namespace DogGo.Controllers
         {
             try
             {
+
                 return RedirectToAction(nameof(Index));
             }
             catch
