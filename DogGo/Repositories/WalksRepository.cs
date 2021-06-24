@@ -45,7 +45,7 @@ namespace DogGo.Repositories
                         Walks walk = new Walks
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Date = (reader.GetDateTime(reader.GetOrdinal("Date"))).ToShortDateString(),
+                            Date = reader.GetDateTime(reader.GetOrdinal("Date")),
                             Duration = (reader.GetInt32(reader.GetOrdinal("Duration")))/60,
                             WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
                             DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
@@ -90,6 +90,32 @@ namespace DogGo.Repositories
 
                     }
                         return totalwalks;
+                }
+            }
+        }
+
+        public void AddWalks(Walks  Walks)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    INSERT INTO Walks (date, dogId, duration, walkerId)
+                    OUTPUT INSERTED.ID
+                    VALUES (@date, @dogId, @duration, @walkerId);
+                ";
+
+                    cmd.Parameters.AddWithValue("@date", Walks.Date);
+                    cmd.Parameters.AddWithValue("@dogId", Walks.DogId);
+                    cmd.Parameters.AddWithValue("@duration", (Walks.Duration)*60);
+                    cmd.Parameters.AddWithValue("@walkerId", Walks.WalkerId);
+
+
+                    cmd.ExecuteNonQuery();
+
+                    
                 }
             }
         }

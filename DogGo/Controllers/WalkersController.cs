@@ -14,12 +14,14 @@ namespace DogGo.Controllers
     {
         private readonly IWalkerRepository _walkerRepo;
         private readonly IWalksRepository _walksRepo;
+        private readonly IDogRepository _dogRepe;
 
         // ASP.NET will give us an instance of our Walker Repository. This is called "Dependency Injection"
-        public WalkersController(IWalkerRepository walkerRepository, IWalksRepository walksRepository)
+        public WalkersController(IWalkerRepository walkerRepository,IDogRepository dogRepository, IWalksRepository walksRepository)
         {
             _walkerRepo = walkerRepository;
             _walksRepo = walksRepository;
+            _dogRepe = dogRepository;
         }
 
         // GET: WalkersController
@@ -62,19 +64,35 @@ namespace DogGo.Controllers
         // GET: WalkersController/Create
         public ActionResult Create()
         {
-            return View();
+            List<Walker> walkers = _walkerRepo.GetAllWalkers();
+            List<Dog> dogs = _dogRepe.GetAll();
+
+            DogWalksForm vm = new DogWalksForm()
+            {
+                Walk = new Walks(),
+                Dogs = dogs,
+                Walkers = walkers
+            };
+            return View(vm);
         }
 
         // POST: WalkersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(DogWalksForm dogwalk)
         {
             try
             {
+                foreach(var value in dogwalk.SelectedValues)
+                {
+                    dogwalk.Walk.DogId = value;
+                    _walksRepo.AddWalks(dogwalk.Walk);
+                }
+                
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }

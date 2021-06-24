@@ -10,5 +10,6 @@ namespace DogGo.Repositories
     {
         List<Walks> GetAllWalksByWalkerId(int id);
         public int GetWalkerTime(int id);
+        public void AddWalks(Walks Walks);
     }
 }

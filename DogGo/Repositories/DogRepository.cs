@@ -87,7 +87,7 @@ namespace DogGo.Repositories
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Breed = reader.GetString(reader.GetOrdinal("Breed")),                        
+                            Breed = reader.GetString(reader.GetOrdinal("Breed")),
                             OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId")),
                             owner = new Owner
                             {
@@ -124,8 +124,23 @@ namespace DogGo.Repositories
 
                     cmd.Parameters.AddWithValue("@name", dog.Name);
                     cmd.Parameters.AddWithValue("@breed", dog.Breed);
-                    cmd.Parameters.AddWithValue("@ImageUrl", dog.ImageUrl);
-                    cmd.Parameters.AddWithValue("@Notes", dog.Notes);
+                    if (dog.ImageUrl != null)
+                    {
+                        cmd.Parameters.AddWithValue("@ImageUrl", dog.ImageUrl);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@ImageUrl", DBNull.Value);
+                    }
+                    if (dog.Notes != null)
+                    {
+                        cmd.Parameters.AddWithValue("@Notes", dog.Notes);
+
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
+                    }
                     cmd.Parameters.AddWithValue("@ownerId", dog.OwnerId);
 
                     int id = (int)cmd.ExecuteScalar();
