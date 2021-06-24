@@ -1,0 +1,62 @@
+﻿@model DogGo.Models.ViewModels.WalksDeleteView
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<h1>Pick Walks to delete...</h1>
+
+<form asp-action="Delete">
+    <div class="form-group">
+        
+        <select asp-for="SelectedValues" multiple class="selectpicker form-control">
+            <option value="">Walks to Delete</option>
+            @foreach (var walk in Model.Walks)
+            {
+                <option value="@walk.Id">@walk.Id : @walk.Duration</option>
+            }
+        </select>
+        @*@Html.ListBoxFor(model => model.SelectedValues, new MultiSelectList(Model.Dogs, "Id", "Name", Model.SelectedValues), new { @class = "form-control", multiple = "multiple" })*@
+    </div>
+    <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <a asp-action="Index">Back to List</a>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Dog Name
+            </th>
+            <th>
+                Duration
+            </th>
+            <th>
+                Client
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Walks)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DogName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Client.Name)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
