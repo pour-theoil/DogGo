@@ -117,35 +117,39 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO Dog ([Name], Breed, ImageUrl, Notes, OwnerId)
-                    OUTPUT INSERTED.ID
-                    VALUES (@name, @breed, @ImageUrl, @Notes, @ownerId);
-                ";
+                INSERT INTO Dog ([Name], OwnerId, Breed, Notes, ImageUrl)
+                OUTPUT INSERTED.ID
+                VALUES (@name, @ownerId, @breed, @notes, @imageUrl);
+            ";
 
                     cmd.Parameters.AddWithValue("@name", dog.Name);
                     cmd.Parameters.AddWithValue("@breed", dog.Breed);
-                    if (dog.ImageUrl != null)
-                    {
-                        cmd.Parameters.AddWithValue("@ImageUrl", dog.ImageUrl);
-                    }
-                    else
-                    {
-                        cmd.Parameters.AddWithValue("@ImageUrl", DBNull.Value);
-                    }
-                    if (dog.Notes != null)
-                    {
-                        cmd.Parameters.AddWithValue("@Notes", dog.Notes);
-
-                    }
-                    else
-                    {
-                        cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
-                    }
                     cmd.Parameters.AddWithValue("@ownerId", dog.OwnerId);
 
-                    int id = (int)cmd.ExecuteScalar();
+                    // nullable columns
+                    if (dog.Notes == null)
+                    {
+                        cmd.Parameters.AddWithValue("@notes", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@notes", dog.Notes);
+                    }
 
-                    dog.Id = id;
+                    if (dog.ImageUrl == null)
+                    {
+                        cmd.Parameters.AddWithValue("@imageUrl", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@imageUrl", dog.ImageUrl);
+                    }
+
+
+                    int newlyCreatedId = (int)cmd.ExecuteScalar();
+
+                    dog.Id = newlyCreatedId;
+
                 }
             }
         }

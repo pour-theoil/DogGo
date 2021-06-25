@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DogGo.Controllers
@@ -15,20 +16,34 @@ namespace DogGo.Controllers
         private readonly IWalkerRepository _walkerRepo;
         private readonly IWalksRepository _walksRepo;
         private readonly IDogRepository _dogRepe;
+        private readonly IOwnerRepository _ownerRepo;
 
         // ASP.NET will give us an instance of our Walker Repository. This is called "Dependency Injection"
-        public WalkersController(IWalkerRepository walkerRepository,IDogRepository dogRepository, IWalksRepository walksRepository)
+        public WalkersController(IOwnerRepository ownerRepository, IWalkerRepository walkerRepository, IDogRepository dogRepository, IWalksRepository walksRepository)
         {
             _walkerRepo = walkerRepository;
             _walksRepo = walksRepository;
             _dogRepe = dogRepository;
+            _ownerRepo = ownerRepository;
         }
 
         // GET: WalkersController
         // GET: Walkers
         public ActionResult Index()
         {
-            List<Walker> walkers = _walkerRepo.GetAllWalkers();
+            List<Walker> walkers = new List<Walker>();
+            try
+            {
+                int ownerId = GetCurrentUserId();
+                Owner owner = _ownerRepo.GetOwnerById(ownerId);
+                walkers = _walkerRepo.GetWalkersInNeighborhood(owner.Neighborhood.Id);
+            }
+            catch (Exception ex)
+            {
+                walkers = _walkerRepo.GetAllWalkers();
+            }
+
+
 
             return View(walkers);
         }
@@ -42,7 +57,7 @@ namespace DogGo.Controllers
 
             Totaltime totalwalks = new Totaltime()
             {
-                Hours = totalminutes/60,
+                Hours = totalminutes / 60,
                 Minutes = totalminutes % 3600
             };
             WalkerViewModel vm = new WalkerViewModel()
@@ -64,6 +79,7 @@ namespace DogGo.Controllers
         // GET: WalkersController/Create
         public ActionResult Create()
         {
+
             List<Walker> walkers = _walkerRepo.GetAllWalkers();
             List<Dog> dogs = _dogRepe.GetAll();
 
@@ -83,12 +99,12 @@ namespace DogGo.Controllers
         {
             try
             {
-                foreach(var value in dogwalk.SelectedValues)
+                foreach (var value in dogwalk.SelectedValues)
                 {
                     dogwalk.Walk.DogId = value;
                     _walksRepo.AddWalks(dogwalk.Walk);
                 }
-                
+
 
                 return RedirectToAction(nameof(Index));
             }
@@ -139,6 +155,11 @@ namespace DogGo.Controllers
             {
                 return View();
             }
+        }
+        private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
