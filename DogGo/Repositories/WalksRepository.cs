@@ -101,6 +101,7 @@ namespace DogGo.Repositories
             }
         }
 
+
         public int GetWalkerTime(int id)
 
         {

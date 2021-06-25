@@ -15,5 +15,10 @@ namespace DogGo.Models
         public int DogId { get; set; }  
         public Owner Client { get; set; }
 
+        public string DatetoString()
+        {
+            return Date.ToShortDateString();
+        }
+
     }
 }
