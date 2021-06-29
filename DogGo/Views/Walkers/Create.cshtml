@@ -41,14 +41,14 @@
             </div>
             <div class="form-group">
                 <label asp-for="Walk.DogId" class="control-label"></label>
-                <select asp-for="SelectedValues" multiple class="selectpicker form-control">
+                @*<select asp-for="SelectedValues" multiple class="selectpicker form-control">
                     <option value="">Select Walker</option>
                     @foreach (Dog dog in Model.Dogs)
                     {
                         <option value="@dog.Id">@dog.Name</option>
                     }
-                </select>
-                @*@Html.ListBoxFor(model => model.SelectedValues, new MultiSelectList(Model.Dogs, "Id", "Name", Model.SelectedValues), new { @class = "form-control", multiple = "multiple" })*@
+                </select>*@
+                @Html.ListBoxFor(model => model.SelectedValues, new MultiSelectList(Model.Dogs, "Id", "Name", Model.SelectedValues), new { @class = "form-control", multiple = "multiple" })
             </div>
 
             <div class="form-group">

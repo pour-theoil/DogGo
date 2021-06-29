@@ -79,9 +79,11 @@ namespace DogGo.Controllers
         // GET: WalkersController/Create
         public ActionResult Create()
         {
+            int ownerId = GetCurrentUserId();
 
-            List<Walker> walkers = _walkerRepo.GetAllWalkers();
-            List<Dog> dogs = _dogRepe.GetAll();
+            Owner owner = _ownerRepo.GetOwnerById(ownerId);
+            List<Walker> walkers = _walkerRepo.GetWalkersInNeighborhood(owner.Neighborhood.Id);
+            List<Dog> dogs = _dogRepe.GetDogsByOwnerId(ownerId);
 
             DogWalksForm vm = new DogWalksForm()
             {
